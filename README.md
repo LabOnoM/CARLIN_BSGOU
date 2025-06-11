@@ -1,5 +1,44 @@
 # This if a forked branch to the original [CARLIN](https://gitlab.com/hormozlab/carlin)
 
+## Purpose of this fork
+
+The main purpose of this fork is to modify the original CARLIN code for use of `CatchAllCmdW.exe` in Linux environment.
+
+To use `CatchAllCmdW.exe` in Linux, we used a Windows emulator, [Wine](https://www.winehq.org).
+
+```bash
+sudo apt install --install-recommends winehq-stable
+sudo apt-get install wine-mono
+wget https://dl.winehq.org/wine/wine-mono/9.0.0/wine-mono-9.0.0-x86.msi
+wine msiexec /i wine-mono-9.0.0-x86.msi
+```
+
+Then replace the `% 4. Run CatchAll` code chunck in [/@Bank/Bank.m](https://github.com/LabOnoM/CARLIN_BSGOU/blob/f261d6f7ff9396eabfa9b88d5e5bf79daf4bfb60/%40Bank/Bank.m) with the below:
+
+```matlab
+% 4. Run CatchAll
+% Ensure absolute paths
+if ~startsWith(catchall_input_file, '/')
+    catchall_input_file = fullfile(pwd, catchall_input_file);
+end
+if ~startsWith(catchall_subdir, '/')
+    catchall_subdir = fullfile(pwd, catchall_subdir);
+end
+
+disp(catchall_input_file);
+disp(catchall_subdir);
+
+% Convert to Wine-friendly Windows paths
+catchall_input_file_win = unix2winpath(catchall_input_file);
+catchall_subdir_win = unix2winpath(catchall_subdir);
+catchall_input_file_win = strtrim(catchall_input_file_win);
+catchall_subdir_win = strtrim(catchall_subdir_win);
+prog = strtrim(prog);
+
+disp(['wine ' prog ' ' catchall_input_file_win ' ' catchall_subdir_win]);
+system(['wine ' prog ' ' catchall_input_file_win ' ' catchall_subdir_win]);
+```
+
 # CARLIN Pipeline
 
 The CARLIN pipeline calls alleles from sequencing runs of the CARLIN amplicon. It was written in MATLAB 2019a.
