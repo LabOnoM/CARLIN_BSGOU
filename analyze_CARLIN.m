@@ -150,6 +150,12 @@ function analyze_CARLIN(fastq_file, cfg_type, outdir, varargin)
         ref_CBs = get_SC_ref_BCs(params.Results.ref_CB_file);
         FQ = SCFastQData(params.Results.fastq_file, cfg, CARLIN_def);                         
     end
+    % Spill to disk early to minimize memory usage
+    try
+        FQ.spill_to_disk(sprintf('%s/FQ_temp.mat', params.Results.outdir));
+    catch
+        warning('Could not spill FASTQ data to disk.');
+    end
 
     if (isempty(FQ.get_SEQs()))
         fprintf('ERROR: No reads survive filtering. Ensure that your CFG_TYPE and CARLIN_Amplicon settings are correct.\n');
@@ -179,13 +185,20 @@ function analyze_CARLIN(fastq_file, cfg_type, outdir, varargin)
         thresholds = tag_collection_denoised.compute_thresholds(params, FQ);
         tag_called_allele = tag_collection_denoised.call_alleles(CARLIN_def, aligned, thresholds.chosen);
         summary = BulkExperimentReport.create(CARLIN_def, tag_collection_denoised, tag_denoise_map, tag_called_allele, FQ, thresholds);
-    else        
+    else
         tag_collection = CBCollection.FromFQ(FQ);
         [tag_collection_denoised, tag_denoise_map] = tag_collection.denoise(ref_CBs);
         thresholds = tag_collection_denoised.compute_thresholds(params, FQ, length(ref_CBs));
         tag_called_allele = tag_collection_denoised.call_alleles(CARLIN_def, aligned, [thresholds.CB.chosen, thresholds.UMI.chosen]);
         summary = SCExperimentReport.create(CARLIN_def, tag_collection_denoised, tag_collection, tag_denoise_map, ...
                                             tag_called_allele, FQ, thresholds, ref_CBs);
+    end
+
+    % Spill aligned sequences to disk to free memory before generating outputs
+    try
+        aligned.spill_to_disk(sprintf('%s/aligned_temp.mat', params.Results.outdir));
+    catch
+        warning('Could not spill aligned sequences to disk.');
     end
    
     % Save just summary values needed for further analysis separately, so

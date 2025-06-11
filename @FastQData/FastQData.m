@@ -59,6 +59,9 @@ classdef (Abstract=true) FastQData < handle
         end
         
         function [SEQ_ind, SEQ_weight] = get_SEQ_ind_by_UMI(obj, UMI, filter)
+            if isempty(obj.UMI) && ~isempty(obj.backing_file)
+                obj.load_from_disk();
+            end
             
             if (size(UMI,1) > 1)                
                 assert(iscell(UMI));
@@ -91,10 +94,16 @@ classdef (Abstract=true) FastQData < handle
         end
         
         function UMIs = get_UMIs(obj)
+            if isempty(obj.UMI) && ~isempty(obj.backing_file)
+                obj.load_from_disk();
+            end
             UMIs = obj.UMI(unique_by_freq(obj.read_UMI(obj.masks.valid_lines)));
         end
-        
+
         function SEQs = get_SEQs(obj)
+            if isempty(obj.SEQ_valid) && ~isempty(obj.backing_file)
+                obj.load_from_disk();
+            end
             assert(~any(cellfun(@isempty, obj.SEQ_valid)));
             SEQs = cellfun(@int2nt, obj.SEQ_valid, 'un', false);
         end

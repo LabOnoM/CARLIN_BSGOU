@@ -1,7 +1,10 @@
 function suspect_alleles = plot_diagnostic(cfg, FQ, aligned, tag_collection_denoised, tag_denoise_map, ...
                                            tag_called_allele, summary, thresholds, varargin)
+
+    aligned.load_from_disk();
+    aligned_seqs = aligned.get_aligned_SEQs();
     
-    [~, ~, event_ind] = unique(cellfun(@(x) x.get_event_structure, aligned.aligned_SEQ, 'un', false));
+    [~, ~, event_ind] = unique(cellfun(@(x) x.get_event_structure, aligned_seqs, 'un', false));
     N = length(FQ.masks.valid_lines);
     
     dat = struct('sequence' , FQ.read_SEQ_valid(FQ.masks.valid_lines), ...
@@ -609,27 +612,27 @@ function sp = distance_by_tag(Nr, Nc, which_sp, dat, cutoff, FQ, aligned, summar
     y_sanitized(y_sanitized(:,1)>cutoff,:) = [];
     
     L_SEQ_valid   = cellfun(@length, FQ.SEQ_valid);
-    L_SEQ_aligned = cellfun(@(x) length(degap(x.get_seq())), aligned.aligned_SEQ);
+    L_SEQ_aligned = cellfun(@(x) length(degap(x.get_seq())), aligned_seqs);
     
     bp_diff = abs(L_SEQ_valid(y_sanitized(:,2))-L_SEQ_aligned(y_sanitized(:,3)));
     
     [y_sanitized_unique, ~, y_sanitized_ind] = unique([y_sanitized(bp_diff==0,2) y_sanitized(bp_diff==0,3)], 'rows');
     temp_bp_diff_0 = cellfun(@(x,y) sum(int2nt(x)~=y), FQ.SEQ_valid(y_sanitized_unique(:,1)), ...
-                             cellfun(@(z) degap(z.get_seq()), aligned.aligned_SEQ(y_sanitized_unique(:,2)), 'un', false));
+                             cellfun(@(z) degap(z.get_seq()), aligned_seqs(y_sanitized_unique(:,2)), 'un', false));
     bp_diff(bp_diff==0) = temp_bp_diff_0(y_sanitized_ind);
     
 %     
 %     bp_diff = cellfun(@(x,y) abs(length(x)-length(y)), FQ.SEQ_valid(y_sanitized(:,2)), ...
-%              cellfun(@(z) degap(z.get_seq()), aligned.aligned_SEQ(y_sanitized(:,3)), 'un', false));
+%              cellfun(@(z) degap(z.get_seq()), aligned_seqs(y_sanitized(:,3)), 'un', false));
 % 
 %     bp_diff(bp_diff==0) = cellfun(@(x,y) sum(int2nt(x)~=y), FQ.SEQ_valid(y_sanitized(bp_diff==0,2)), ...
-%                           cellfun(@(z) degap(z.get_seq()), aligned.aligned_SEQ(y_sanitized(bp_diff==0,3)), 'un', false));
+%                           cellfun(@(z) degap(z.get_seq()), aligned_seqs(y_sanitized(bp_diff==0,3)), 'un', false));
 
     x_sanitized = unique([dat.CB dat.sanitized dat.allele], 'rows');
     x_sanitized(x_sanitized(:,1)>cutoff,:) = [];
     discard_mask = x_sanitized(:,3)==0;
     
-%     L_sanitized = cellfun(@(x) length(degap(x.get_seq)), aligned.aligned_SEQ(x_sanitized(:,2)));
+%     L_sanitized = cellfun(@(x) length(degap(x.get_seq)), aligned_seqs(x_sanitized(:,2)));
     L_sanitized     = L_SEQ_aligned(x_sanitized(:,2));
     L_sanitized_neg = zeros(size(L_sanitized));
     L_sanitized_pos = zeros(size(L_sanitized));
@@ -646,11 +649,11 @@ function sp = distance_by_tag(Nr, Nc, which_sp, dat, cutoff, FQ, aligned, summar
     y_allele(y_allele(:,1)>cutoff,:) = [];
     
     bp_diff = cellfun(@(x,y) abs(length(x)-length(y)), ...
-              cellfun(@(z) degap(z.get_seq()), aligned.aligned_SEQ(y_allele(:,2)), 'un', false), ...
+              cellfun(@(z) degap(z.get_seq()), aligned_seqs(y_allele(:,2)), 'un', false), ...
               cellfun(@(z) degap(z.get_seq()), summary.alleles(y_allele(:,3)), 'un', false));
     
     bp_diff(bp_diff==0) = cellfun(@(x,y) sum(x~=y), ...
-                          cellfun(@(z) degap(z.get_seq()), aligned.aligned_SEQ(y_allele(bp_diff==0,2)), 'un', false), ...
+                          cellfun(@(z) degap(z.get_seq()), aligned_seqs(y_allele(bp_diff==0,2)), 'un', false), ...
                           cellfun(@(z) degap(z.get_seq()), summary.alleles(y_allele(bp_diff==0,3)), 'un', false));
                   
     x_allele = unique([dat.CB(dat.allele>0), dat.allele(dat.allele>0)], 'rows');
@@ -758,24 +761,24 @@ function [sp, suspect_alleles] = distance_by_allele(Nr, Nc, which_sp, dat, FQ, a
     y_sanitized(y_sanitized(:,1)==0,:) = [];
      
     L_SEQ_valid   = cellfun(@length, FQ.SEQ_valid);
-    L_SEQ_aligned = cellfun(@(x) length(degap(x.get_seq())), aligned.aligned_SEQ);
+    L_SEQ_aligned = cellfun(@(x) length(degap(x.get_seq())), aligned_seqs);
     
     bp_diff = abs(L_SEQ_valid(y_sanitized(:,2))-L_SEQ_aligned(y_sanitized(:,3)));
 
     [y_sanitized_unique, ~, y_sanitized_ind] = unique([y_sanitized(bp_diff==0,2) y_sanitized(bp_diff==0,3)], 'rows');
     temp_bp_diff_0 = cellfun(@(x,y) sum(int2nt(x)~=y), FQ.SEQ_valid(y_sanitized_unique(:,1)), ...
-                             cellfun(@(z) degap(z.get_seq()), aligned.aligned_SEQ(y_sanitized_unique(:,2)), 'un', false));
+                             cellfun(@(z) degap(z.get_seq()), aligned_seqs(y_sanitized_unique(:,2)), 'un', false));
     bp_diff(bp_diff==0) = temp_bp_diff_0(y_sanitized_ind);
 % 
 %     
 %     bp_diff(bp_diff==0) = cellfun(@(x,y) sum(int2nt(x)~=y), FQ.SEQ_valid(y_sanitized(bp_diff==0,2)), ...
-%                           cellfun(@(z) degap(z.get_seq()), aligned.aligned_SEQ(y_sanitized(bp_diff==0,3)), 'un', false));
+%                           cellfun(@(z) degap(z.get_seq()), aligned_seqs(y_sanitized(bp_diff==0,3)), 'un', false));
 
     x_sanitized = unique([dat.allele_eventual dat.allele dat.sanitized], 'rows');
     x_sanitized(x_sanitized(:,1)==0,:) = [];
     discard_mask = x_sanitized(:,2)==0;
     
-%     L_sanitized = cellfun(@(x) length(degap(x.get_seq)), aligned.aligned_SEQ(x_sanitized(:,3)));
+%     L_sanitized = cellfun(@(x) length(degap(x.get_seq)), aligned_seqs(x_sanitized(:,3)));
     L_sanitized     = L_SEQ_aligned(x_sanitized(:,3));
     L_sanitized_neg = zeros(size(L_sanitized));
     L_sanitized_pos = zeros(size(L_sanitized));
@@ -794,11 +797,11 @@ function [sp, suspect_alleles] = distance_by_allele(Nr, Nc, which_sp, dat, FQ, a
     
     bp_diff = cellfun(@(x,y) abs(length(x)-length(y)), ...
                       cellfun(@(z) degap(z.get_seq()), summary.alleles(y_allele(:,1)), 'un', false), ...
-                      cellfun(@(z) degap(z.get_seq()), aligned.aligned_SEQ(y_allele(:,2)), 'un', false));
+                      cellfun(@(z) degap(z.get_seq()), aligned_seqs(y_allele(:,2)), 'un', false));
     
     bp_diff(bp_diff==0) = cellfun(@(x,y) sum(x~=y), ...
                           cellfun(@(z) degap(z.get_seq()), summary.alleles(y_allele(bp_diff==0,1)), 'un', false), ...
-                          cellfun(@(z) degap(z.get_seq()), aligned.aligned_SEQ(y_allele(bp_diff==0,2)), 'un', false));
+                          cellfun(@(z) degap(z.get_seq()), aligned_seqs(y_allele(bp_diff==0,2)), 'un', false));
                       
                   
     x_allele = unique(dat.allele(dat.allele>0));
