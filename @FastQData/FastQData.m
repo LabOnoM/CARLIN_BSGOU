@@ -1,6 +1,6 @@
 classdef (Abstract=true) FastQData < handle
-    
-    properties (SetAccess = immutable, GetAccess = public)
+
+    properties (GetAccess = public)
         source_files
         Nreads
         SEQ_raw
@@ -14,6 +14,7 @@ classdef (Abstract=true) FastQData < handle
         read_UMI
         masks
         trim_loc
+        backing_file = ''
     end
     
         
@@ -58,6 +59,9 @@ classdef (Abstract=true) FastQData < handle
         end
         
         function [SEQ_ind, SEQ_weight] = get_SEQ_ind_by_UMI(obj, UMI, filter)
+            if isempty(obj.UMI) && ~isempty(obj.backing_file)
+                obj.load_from_disk();
+            end
             
             if (size(UMI,1) > 1)                
                 assert(iscell(UMI));
@@ -90,12 +94,63 @@ classdef (Abstract=true) FastQData < handle
         end
         
         function UMIs = get_UMIs(obj)
+            if isempty(obj.UMI) && ~isempty(obj.backing_file)
+                obj.load_from_disk();
+            end
             UMIs = obj.UMI(unique_by_freq(obj.read_UMI(obj.masks.valid_lines)));
         end
-        
+
         function SEQs = get_SEQs(obj)
+            if isempty(obj.SEQ_valid) && ~isempty(obj.backing_file)
+                obj.load_from_disk();
+            end
             assert(~any(cellfun(@isempty, obj.SEQ_valid)));
             SEQs = cellfun(@int2nt, obj.SEQ_valid, 'un', false);
+        end
+
+        function spill_to_disk(obj, filename)
+            if nargin < 2
+                filename = [tempname '.mat'];
+            end
+            mf = matfile(filename, 'Writable', true);
+            mf.source_files   = obj.source_files;
+            mf.Nreads         = obj.Nreads;
+            mf.SEQ_raw        = obj.SEQ_raw;
+            mf.read_SEQ_raw   = obj.read_SEQ_raw;
+            mf.SEQ_trimmed    = obj.SEQ_trimmed;
+            mf.read_SEQ_trimmed = obj.read_SEQ_trimmed;
+            mf.SEQ_valid      = obj.SEQ_valid;
+            mf.read_SEQ_valid = obj.read_SEQ_valid;
+            mf.QC             = obj.QC;
+            mf.UMI            = obj.UMI;
+            mf.read_UMI       = obj.read_UMI;
+            mf.masks          = obj.masks;
+            mf.trim_loc       = obj.trim_loc;
+            obj.source_files = [];
+            obj.Nreads = [];
+            obj.SEQ_raw = [];
+            obj.read_SEQ_raw = [];
+            obj.SEQ_trimmed = [];
+            obj.read_SEQ_trimmed = [];
+            obj.SEQ_valid = [];
+            obj.read_SEQ_valid = [];
+            obj.QC = [];
+            obj.UMI = [];
+            obj.read_UMI = [];
+            obj.masks = [];
+            obj.trim_loc = [];
+            obj.backing_file = filename;
+        end
+
+        function load_from_disk(obj)
+            if isempty(obj.backing_file) || exist(obj.backing_file,'file') ~= 2
+                return;
+            end
+            s = load(obj.backing_file);
+            fns = fieldnames(s);
+            for i = 1:numel(fns)
+                obj.(fns{i}) = s.(fns{i});
+            end
         end
     end
 

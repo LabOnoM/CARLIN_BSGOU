@@ -1,7 +1,11 @@
 function suspect_alleles = plot_diagnostic(cfg, FQ, aligned, tag_collection_denoised, tag_denoise_map, ...
                                            tag_called_allele, summary, thresholds, varargin)
+
+    aligned.load_from_disk();
+    FQ.load_from_disk();
+    aligned_seqs = aligned.get_aligned_SEQs();
     
-    [~, ~, event_ind] = unique(cellfun(@(x) x.get_event_structure, aligned.aligned_SEQ, 'un', false));
+    [~, ~, event_ind] = unique(cellfun(@(x) x.get_event_structure, aligned_seqs, 'un', false));
     N = length(FQ.masks.valid_lines);
     
     dat = struct('sequence' , FQ.read_SEQ_valid(FQ.masks.valid_lines), ...
@@ -152,10 +156,10 @@ function suspect_alleles = plot_diagnostic(cfg, FQ, aligned, tag_collection_deno
         sp(1,4) = UMI_composition_all(Nr, Nc, 4, FQ, summary);                           
         sp(1,5) = UMI_composition_by_allele(Nr, Nc, 5, summary);
         sp(2,1) = reads_by_tag       (Nr, Nc, [ 6: 9], dat, cutoff, summary, 'UMI');
-        sp(3,1) = distance_by_tag    (Nr, Nc, [11:14], dat, cutoff, FQ, aligned, summary);
+        sp(3,1) = distance_by_tag    (Nr, Nc, [11:14], dat, cutoff, FQ, aligned_seqs, summary);
         sp(4,1) = variety_by_tag     (Nr, Nc, [16:19], dat, cutoff, 'UMI');        
         sp(2,2) = reads_by_allele    (Nr, Nc, 10, dat, summary);
-        [sp(3,2), suspect_alleles] = distance_by_allele (Nr, Nc, 15, dat, FQ, aligned, summary, 'UMI');
+        [sp(3,2), suspect_alleles] = distance_by_allele (Nr, Nc, 15, dat, FQ, aligned_seqs, summary, 'UMI');
         sp(4,2) = variety_by_allele  (Nr, Nc, 20, dat, 'UMI');                     
     else
         sp(1,1) = reads_by_filter(Nr, Nc, 1, summary, 'CB');
@@ -164,10 +168,10 @@ function suspect_alleles = plot_diagnostic(cfg, FQ, aligned, tag_collection_deno
         sp(1,4) = CB_UMI_composition_all(Nr, Nc, 4, FQ, summary, dat);
         sp(1,5) = CB_UMI_composition_by_allele(Nr, Nc, 5, summary, FQ, dat);
         sp(2,1) = reads_by_tag       (Nr, Nc, [ 6: 9], dat, cutoff, summary, 'CB');
-        sp(3,1) = distance_by_tag    (Nr, Nc, [11:14], dat, cutoff, FQ, aligned, summary);
+        sp(3,1) = distance_by_tag    (Nr, Nc, [11:14], dat, cutoff, FQ, aligned_seqs, summary);
         sp(4,1) = variety_by_tag     (Nr, Nc, [16:19], dat, cutoff, 'CB');
         sp(2,2) = reads_by_allele    (Nr, Nc, 10, dat, summary);
-        [sp(3,2), suspect_alleles] = distance_by_allele (Nr, Nc, 15, dat, FQ, aligned, summary, 'CB');
+        [sp(3,2), suspect_alleles] = distance_by_allele (Nr, Nc, 15, dat, FQ, aligned_seqs, summary, 'CB');
         sp(4,2) = variety_by_allele  (Nr, Nc, 20, dat, 'CB');        
     end
     
@@ -542,9 +546,9 @@ function sp = reads_by_tag(Nr, Nc, which_sp, dat, cutoff, summary, type)
             'EdgeColor', 'none', 'FaceColor', 'cyan', 'FaceAlpha', 0.4, 'BarWidth', 0.99);    
         legend_entries = [legend_entries; cellstr('Edited Allele')];
     end
-    scatter(x_reads_sanitized( discard_mask), log10(y_reads_sanitized( discard_mask)), [], 'b', 'Marker', '.');
-    scatter(x_reads_sanitized(~discard_mask), log10(y_reads_sanitized(~discard_mask)), 10, 'g', 'filled', 'Marker', 'o');
-    scatter(x_reads_per_CB, log10(y_reads_per_CB), [], 'r', 'Marker', '.');
+    scatter(x_reads_sanitized( discard_mask), log10(y_reads_sanitized( discard_mask)), [], [0 0 1], 'Marker', '.');
+    scatter(x_reads_sanitized(~discard_mask), log10(y_reads_sanitized(~discard_mask)), 10, [0 1 0], 'filled', 'Marker', 'o');
+    scatter(x_reads_per_CB, log10(y_reads_per_CB), [], [1 0 0], 'Marker', '.');
     hold off;
     
     legend([legend_entries; {'Sanitized - Discarded'; 'Sanitized - Merged in Allele'; sprintf('Per %s', type)}]);
@@ -593,9 +597,9 @@ function sp = reads_by_allele(Nr, Nc, which_sp, dat, summary)
         bar(find(~template_mask), log10(y_reads_called(~template_mask)), ...
             'EdgeColor', 'none', 'FaceColor', 'cyan', 'FaceAlpha', 0.4, 'BarWidth', 0.99);    
     end
-    scatter(x_reads_sanitized( discard_mask), log10(y_reads_sanitized( discard_mask)), [], 'b', 'Marker', '.');
-    scatter(x_reads_sanitized(~discard_mask), log10(y_reads_sanitized(~discard_mask)), 10, 'g', 'filled', 'Marker', 'o');
-    scatter(x_reads_per_CB, log10(y_reads_per_CB), [], 'r', 'Marker', '.');
+    scatter(x_reads_sanitized( discard_mask), log10(y_reads_sanitized( discard_mask)), [], [0 0 1], 'Marker', '.');
+    scatter(x_reads_sanitized(~discard_mask), log10(y_reads_sanitized(~discard_mask)), 10, [0 1 0], 'filled', 'Marker', 'o');
+    scatter(x_reads_per_CB, log10(y_reads_per_CB), [], [1 0 0], 'Marker', '.');
     hold off;
         
     axis tight; box on;
@@ -603,33 +607,33 @@ function sp = reads_by_allele(Nr, Nc, which_sp, dat, summary)
  
 end
                  
-function sp = distance_by_tag(Nr, Nc, which_sp, dat, cutoff, FQ, aligned, summary)
+function sp = distance_by_tag(Nr, Nc, which_sp, dat, cutoff, FQ, aligned_seqs, summary)
                      
     y_sanitized = unique([dat.CB dat.sequence dat.sanitized], 'rows');
     y_sanitized(y_sanitized(:,1)>cutoff,:) = [];
     
     L_SEQ_valid   = cellfun(@length, FQ.SEQ_valid);
-    L_SEQ_aligned = cellfun(@(x) length(degap(x.get_seq())), aligned.aligned_SEQ);
+    L_SEQ_aligned = cellfun(@(x) length(degap(x.get_seq())), aligned_seqs);
     
     bp_diff = abs(L_SEQ_valid(y_sanitized(:,2))-L_SEQ_aligned(y_sanitized(:,3)));
     
     [y_sanitized_unique, ~, y_sanitized_ind] = unique([y_sanitized(bp_diff==0,2) y_sanitized(bp_diff==0,3)], 'rows');
     temp_bp_diff_0 = cellfun(@(x,y) sum(int2nt(x)~=y), FQ.SEQ_valid(y_sanitized_unique(:,1)), ...
-                             cellfun(@(z) degap(z.get_seq()), aligned.aligned_SEQ(y_sanitized_unique(:,2)), 'un', false));
+                             cellfun(@(z) degap(z.get_seq()), aligned_seqs(y_sanitized_unique(:,2)), 'un', false));
     bp_diff(bp_diff==0) = temp_bp_diff_0(y_sanitized_ind);
     
 %     
 %     bp_diff = cellfun(@(x,y) abs(length(x)-length(y)), FQ.SEQ_valid(y_sanitized(:,2)), ...
-%              cellfun(@(z) degap(z.get_seq()), aligned.aligned_SEQ(y_sanitized(:,3)), 'un', false));
+%              cellfun(@(z) degap(z.get_seq()), aligned_seqs(y_sanitized(:,3)), 'un', false));
 % 
 %     bp_diff(bp_diff==0) = cellfun(@(x,y) sum(int2nt(x)~=y), FQ.SEQ_valid(y_sanitized(bp_diff==0,2)), ...
-%                           cellfun(@(z) degap(z.get_seq()), aligned.aligned_SEQ(y_sanitized(bp_diff==0,3)), 'un', false));
+%                           cellfun(@(z) degap(z.get_seq()), aligned_seqs(y_sanitized(bp_diff==0,3)), 'un', false));
 
     x_sanitized = unique([dat.CB dat.sanitized dat.allele], 'rows');
     x_sanitized(x_sanitized(:,1)>cutoff,:) = [];
     discard_mask = x_sanitized(:,3)==0;
     
-%     L_sanitized = cellfun(@(x) length(degap(x.get_seq)), aligned.aligned_SEQ(x_sanitized(:,2)));
+%     L_sanitized = cellfun(@(x) length(degap(x.get_seq)), aligned_seqs(x_sanitized(:,2)));
     L_sanitized     = L_SEQ_aligned(x_sanitized(:,2));
     L_sanitized_neg = zeros(size(L_sanitized));
     L_sanitized_pos = zeros(size(L_sanitized));
@@ -646,11 +650,11 @@ function sp = distance_by_tag(Nr, Nc, which_sp, dat, cutoff, FQ, aligned, summar
     y_allele(y_allele(:,1)>cutoff,:) = [];
     
     bp_diff = cellfun(@(x,y) abs(length(x)-length(y)), ...
-              cellfun(@(z) degap(z.get_seq()), aligned.aligned_SEQ(y_allele(:,2)), 'un', false), ...
+              cellfun(@(z) degap(z.get_seq()), aligned_seqs(y_allele(:,2)), 'un', false), ...
               cellfun(@(z) degap(z.get_seq()), summary.alleles(y_allele(:,3)), 'un', false));
     
     bp_diff(bp_diff==0) = cellfun(@(x,y) sum(x~=y), ...
-                          cellfun(@(z) degap(z.get_seq()), aligned.aligned_SEQ(y_allele(bp_diff==0,2)), 'un', false), ...
+                          cellfun(@(z) degap(z.get_seq()), aligned_seqs(y_allele(bp_diff==0,2)), 'un', false), ...
                           cellfun(@(z) degap(z.get_seq()), summary.alleles(y_allele(bp_diff==0,3)), 'un', false));
                   
     x_allele = unique([dat.CB(dat.allele>0), dat.allele(dat.allele>0)], 'rows');
@@ -662,11 +666,11 @@ function sp = distance_by_tag(Nr, Nc, which_sp, dat, cutoff, FQ, aligned, summar
         
     sp = subplot(Nr,Nc,which_sp);
     
-    s = scatter(x_sanitized( discard_mask,1), L_sanitized( discard_mask), [], 'b', 'Marker', '.'); hold on;
+    s = scatter(x_sanitized( discard_mask,1), L_sanitized( discard_mask), [], [0 0 1], 'Marker', '.'); hold on;
     s.MarkerFaceAlpha = 0.3;
     s.MarkerEdgeAlpha = 0.3;
-    scatter(x_sanitized(~discard_mask,1), L_sanitized(~discard_mask), [], 'g', 'Marker', '.'); 
-    scatter(x_allele(:,1),                L_allele,                   [], 'r', 'Marker', '.'); 
+    scatter(x_sanitized(~discard_mask,1), L_sanitized(~discard_mask), [], [0 1 0], 'Marker', '.');
+    scatter(x_allele(:,1),                L_allele,                   [], [1 0 0], 'Marker', '.');
 %     errorbar(x_sanitized(discard_mask,1), L_sanitized(discard_mask), ...
 %              L_sanitized_neg(discard_mask), L_sanitized_pos(discard_mask), ...
 %              'LineStyle', 'None', 'color', 'b');
@@ -682,7 +686,7 @@ function sp = distance_by_tag(Nr, Nc, which_sp, dat, cutoff, FQ, aligned, summar
     set(gca, 'Xtick', []); 
 end
 
-function [sp, suspect_alleles] = distance_by_allele(Nr, Nc, which_sp, dat, FQ, aligned, summary, type)
+function [sp, suspect_alleles] = distance_by_allele(Nr, Nc, which_sp, dat, FQ, aligned_seqs, summary, type)
 
     if (strcmp(type, 'UMI'))
         
@@ -758,24 +762,24 @@ function [sp, suspect_alleles] = distance_by_allele(Nr, Nc, which_sp, dat, FQ, a
     y_sanitized(y_sanitized(:,1)==0,:) = [];
      
     L_SEQ_valid   = cellfun(@length, FQ.SEQ_valid);
-    L_SEQ_aligned = cellfun(@(x) length(degap(x.get_seq())), aligned.aligned_SEQ);
+    L_SEQ_aligned = cellfun(@(x) length(degap(x.get_seq())), aligned_seqs);
     
     bp_diff = abs(L_SEQ_valid(y_sanitized(:,2))-L_SEQ_aligned(y_sanitized(:,3)));
 
     [y_sanitized_unique, ~, y_sanitized_ind] = unique([y_sanitized(bp_diff==0,2) y_sanitized(bp_diff==0,3)], 'rows');
     temp_bp_diff_0 = cellfun(@(x,y) sum(int2nt(x)~=y), FQ.SEQ_valid(y_sanitized_unique(:,1)), ...
-                             cellfun(@(z) degap(z.get_seq()), aligned.aligned_SEQ(y_sanitized_unique(:,2)), 'un', false));
+                             cellfun(@(z) degap(z.get_seq()), aligned_seqs(y_sanitized_unique(:,2)), 'un', false));
     bp_diff(bp_diff==0) = temp_bp_diff_0(y_sanitized_ind);
 % 
 %     
 %     bp_diff(bp_diff==0) = cellfun(@(x,y) sum(int2nt(x)~=y), FQ.SEQ_valid(y_sanitized(bp_diff==0,2)), ...
-%                           cellfun(@(z) degap(z.get_seq()), aligned.aligned_SEQ(y_sanitized(bp_diff==0,3)), 'un', false));
+%                           cellfun(@(z) degap(z.get_seq()), aligned_seqs(y_sanitized(bp_diff==0,3)), 'un', false));
 
     x_sanitized = unique([dat.allele_eventual dat.allele dat.sanitized], 'rows');
     x_sanitized(x_sanitized(:,1)==0,:) = [];
     discard_mask = x_sanitized(:,2)==0;
     
-%     L_sanitized = cellfun(@(x) length(degap(x.get_seq)), aligned.aligned_SEQ(x_sanitized(:,3)));
+%     L_sanitized = cellfun(@(x) length(degap(x.get_seq)), aligned_seqs(x_sanitized(:,3)));
     L_sanitized     = L_SEQ_aligned(x_sanitized(:,3));
     L_sanitized_neg = zeros(size(L_sanitized));
     L_sanitized_pos = zeros(size(L_sanitized));
@@ -794,11 +798,11 @@ function [sp, suspect_alleles] = distance_by_allele(Nr, Nc, which_sp, dat, FQ, a
     
     bp_diff = cellfun(@(x,y) abs(length(x)-length(y)), ...
                       cellfun(@(z) degap(z.get_seq()), summary.alleles(y_allele(:,1)), 'un', false), ...
-                      cellfun(@(z) degap(z.get_seq()), aligned.aligned_SEQ(y_allele(:,2)), 'un', false));
+                      cellfun(@(z) degap(z.get_seq()), aligned_seqs(y_allele(:,2)), 'un', false));
     
     bp_diff(bp_diff==0) = cellfun(@(x,y) sum(x~=y), ...
                           cellfun(@(z) degap(z.get_seq()), summary.alleles(y_allele(bp_diff==0,1)), 'un', false), ...
-                          cellfun(@(z) degap(z.get_seq()), aligned.aligned_SEQ(y_allele(bp_diff==0,2)), 'un', false));
+                          cellfun(@(z) degap(z.get_seq()), aligned_seqs(y_allele(bp_diff==0,2)), 'un', false));
                       
                   
     x_allele = unique(dat.allele(dat.allele>0));
@@ -808,11 +812,11 @@ function [sp, suspect_alleles] = distance_by_allele(Nr, Nc, which_sp, dat, FQ, a
     
     set(gca,'YDir','normal', 'Yticklabels', []); yyaxis right;
 
-    s = scatter(x_sanitized( discard_mask), L_sanitized( discard_mask), [], 'b', 'Marker', '.'); hold on;
+    s = scatter(x_sanitized( discard_mask), L_sanitized( discard_mask), [], [0 0 1], 'Marker', '.'); hold on;
     s.MarkerFaceAlpha = 0.3;
     s.MarkerEdgeAlpha = 0.3;
-    scatter(x_sanitized(~discard_mask), L_sanitized(~discard_mask), [], 'g', 'Marker', '.'); 
-    scatter(x_allele, L_allele, [], 'r', 'Marker', '.'); 
+    scatter(x_sanitized(~discard_mask), L_sanitized(~discard_mask), [], [0 1 0], 'Marker', '.');
+    scatter(x_allele, L_allele, [], [1 0 0], 'Marker', '.');
 
 %     errorbar(x_sanitized(discard_mask), L_sanitized(discard_mask), ...
 %              L_sanitized_neg(discard_mask), L_sanitized_pos(discard_mask), 'LineStyle', 'None', 'Color', 'blue');
