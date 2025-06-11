@@ -1,0 +1,91 @@
+INPUT
+
+CARLIN Amplicon:                                        TigreCARLIN
+CfgType:                                                sc10xV3
+Input FastQ File(s):                                    /home/ubuntu4/CARLIN/tests/data/TigreCARLIN/10xV3_R1.fastq.gz
+                                                        /home/ubuntu4/CARLIN/tests/data/TigreCARLIN/10xV3_R2.fastq.gz
+Reference barcode file:                                 /home/ubuntu4/CARLIN/cfg/CBs/10xV3_barcodes.txt.gz
+Output directory:                                       /home/ubuntu4/CARLIN/tests/Output/TigreCARLIN/sc10xV3
+
+READ BREAKDOWN                                               Reads      %
+
+in_fastq:                                                   100000    100
+QC_length_match:                                            100000    100
+CB_correct_length:                                          100000    100
+UMI_correct_length:                                         100000    100
+CB_no_N:                                                    100000    100
+UMI_no_N:                                                   100000    100
+good_CB_UMI_QC:                                              83157     83
+valid_provenance_structure:                                  83157     83
+CARLIN_match:                                                86085     86
+valid_5_primer:                                              93395     93
+valid_3_primer:                                             100000    100
+valid_2_seq:                                                 76297     76
+valid_read_structure:                                        73053     73
+trimmed_SEQ_long_enough:                                     68784     69
+SEQ_no_N:                                                    73053     73
+valid_SEQ_structure:                                         68784     69
+valid_lines:                                                 58112     58
+matched_CBs:                                                 57777     58
+common_CBs:                                                  43257     43
+called_CBs_total:                                              896      1
+called_CBs_allele:                                             149      0
+eventful_CBs_total:                                            896      1
+eventful_CBs_allele:                                           149      0
+
+THRESHOLDS
+
+CB_one_tenth_99_pctl:                                            7
+CB_max_cells:                                                    2
+CB_equal_partition:                                              1
+CB_err_floor:                                                    1
+CB_read_floor:                                                  10
+CB_override:                                                   NaN
+CB_chosen:                                                      10
+
+UMI_one_tenth_99_pctl:                                           1
+UMI_max_molecules:                                               2
+UMI_equal_partition:                                             0
+UMI_err_floor:                                                   1
+UMI_read_floor:                                                 10
+UMI_override:                                                  NaN
+UMI_chosen:                                                     10
+
+CELL BARCODE BREAKDOWN
+
+reference:                                                 6794880
+uncleaned:                                                    7251
+matched:                                                      7056
+cleaned:                                                      6746
+common:                                                       1683
+called:                                                         16
+eventful:                                                       16
+
+UMI BREAKDOWN
+
+uncleaned:                                                   33350
+matched:                                                     33153
+cleaned:                                                     32577
+common:                                                         19
+called:                                                         16
+eventful:                                                       16
+
+PREFERENTIAL AMPLIFICATION
+
+Mean reads per edited CB:                                       56
+Mean reads per unedited CB:                                      0
+
+SEQUENCE HETEROGENEITY
+
+Mean % reads in edited CB folded into consensus:                17
+Mean % reads in unedited CB folded into consensus:               0
+
+ALLELES
+
+Total (including template):                                     11
+Singletons (including template):                                 7
+% CBs edited:                                                  100
+Effective Alleles:                                              10
+Diversity Index (normalized by all):                          0.63
+Diversity Index (normalized by edited):                       0.63
+Mean CARLIN potential (by allele):                            0.09

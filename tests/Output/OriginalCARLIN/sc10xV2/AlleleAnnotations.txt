@@ -1,0 +1,12 @@
+[]
+18_36del,50_130del,158_265del
+77_268del
+23_214del,239_256del
+23_268del
+23_265del
+22_23insGG,50_130del,158_265del
+23_238del,264_265del
+77_266del
+23_130del,158_265del
+23_157del,185_186insC,201_265del
+23_30del,34_52delinsTAGCGAC,64_100delinsCCAT,130_265del

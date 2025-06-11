@@ -12,8 +12,10 @@ classdef Bank
       
         function prog = getCatchAllPath()            
            [folder, ~, ~] = fileparts(mfilename('fullpath'));
-           prog = fileread([folder '/CatchAllPath.txt']);           
-           assert(exist(prog, 'file') == 2, 'Specified CatchAll path does not contain the executable');
+           disp(folder)
+           prog = fileread([folder '/CatchAllPath.txt']);
+           disp(folder)
+           % assert(exist(prog, 'file') == 2, 'Specified CatchAll path does not contain the executable');
         end
         
         % Clonal pvalue for allele X (Case 1+2 in manuscript)
@@ -134,9 +136,38 @@ classdef Bank
                 catchall_subdir = strrep(catchall_subdir, '/', '\');
             end
             
-            % 4. Run CatchAll
+            function winpath = unix2winpath(unixpath)
+                unixpath = regexprep(unixpath, '/+$', '');
+                if startsWith(unixpath, '/')
+                    winpath = ['Z:\\' strrep(unixpath(2:end), '/', '\\')];
+                else
+                    error('unix2winpath: path is not absolute!');
+                end
+            end
+
             
-            system([prog ' ' catchall_input_file ' ' catchall_subdir]);
+            % 4. Run CatchAll
+            % Ensure absolute paths
+            if ~startsWith(catchall_input_file, '/')
+                catchall_input_file = fullfile(pwd, catchall_input_file);
+            end
+            if ~startsWith(catchall_subdir, '/')
+                catchall_subdir = fullfile(pwd, catchall_subdir);
+            end
+
+            disp(catchall_input_file);
+            disp(catchall_subdir);
+
+            % Convert to Wine-friendly Windows paths
+            catchall_input_file_win = unix2winpath(catchall_input_file);
+            catchall_subdir_win = unix2winpath(catchall_subdir);
+            catchall_input_file_win = strtrim(catchall_input_file_win);
+            catchall_subdir_win = strtrim(catchall_subdir_win);
+            prog = strtrim(prog);
+
+            disp(['wine ' prog ' ' catchall_input_file_win ' ' catchall_subdir_win]);
+            system(['wine ' prog ' ' catchall_input_file_win ' ' catchall_subdir_win]);
+
             
             % 5. Fetch the best fit model name
             

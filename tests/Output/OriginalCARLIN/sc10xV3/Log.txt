@@ -1,0 +1,42 @@
+Writing log to temporary location: /tmp/tpe33378b1_d868_4e90_a338_220ef961c87e.txt
+Parsing CFG file: sc10xV3.json
+Parsing CARLIN amplicon file: OriginalCARLIN.json
+Parsing CB reference list: /home/ubuntu4/CARLIN/cfg/CBs/10xV3_barcodes.txt.gz
+Unzipping CB reference file to: /tmp/tp62649800_bc83_49e2_a96b_8df3b2ff5b33/10xV3_barcodes.txt
+Removing unzipped CB reference file: /tmp/tp62649800_bc83_49e2_a96b_8df3b2ff5b33/10xV3_barcodes.txt
+6794880 CBs in reference list
+Parsing FASTQ files: /home/ubuntu4/CARLIN/tests/data/OriginalCARLIN/10xV3_R1.fastq.gz, /home/ubuntu4/CARLIN/tests/data/OriginalCARLIN/10xV3_R2.fastq.gz
+Unzipping FASTQ file to: /tmp/tp4a0c0801_3554_48c4_99b7_672682e6f9e1/10xV3_R1.fastq
+Unzipping FASTQ file to: /tmp/tpa04ee14e_ab90_4a81_ac4b_33b8c26840b2/10xV3_R2.fastq
+Reads in FASTQ: 100000
+Removing unzipped FASTQ file: /tmp/tp4a0c0801_3554_48c4_99b7_672682e6f9e1/10xV3_R1.fastq
+Removing unzipped FASTQ file: /tmp/tpa04ee14e_ab90_4a81_ac4b_33b8c26840b2/10xV3_R2.fastq
+Analyzing SC CBs and UMIs
+From 100000 reads, found good (L_QC,L_CB,L_UMI,QC,no N CB,no N UMI,all) (100000,100000,100000,85892,100000,100000,85892) times
+Trimming CARLIN sequences from reads
+From 100000 reads, found (CARLIN,5,3,control,structure,long,AGCT,all) sequences (97363,90143,100000,89846,84382,84235,84382,84235) times
+Merging filters
+From 100000 reads, found valid (provenance,sequence,both) reads (85892,84235,74033) times
+Creating aligned CARLIN store with 8103 sequences
+Sanitizing prefix/postfix of aligned sequences in depot
+...reduced sequence diversity from 8103 to 8099
+Sanitizing conserved regions of aligned sequences in depot
+...reduced sequence diversity from 8099 to 2075
+Building CB collection from FastQ with 2934 CBs
+Denoising CB collection
+...(2827/2934) MiSEQ CBs matched to (2412/6794880) reference CBs
+Denoising UMIs
+Computing thresholds for CB collection
+...(18,2,1,1,10,NaN,18) reads for (99th pctl/10,max_cells,equal,seq_err,min,override,final)
+...1306 common CBs
+...(7,2,0,1,10,NaN,10) reads for (99th pctl/10,max_molecules,equal,seq_err,min,override,final)
+...2597 common UMIs
+Calling alleles for CB collection
+...1289 CBs callable
+Generating report for SC experiment
+Saving results...259/1289 tags edited, 83 alleles
+Generating results file
+Generating allele plot
+Generating diagnostic plot
+Generating warnings file
+Pipeline COMPLETED in 127.419 seconds

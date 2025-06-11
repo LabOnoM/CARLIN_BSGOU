@@ -1,0 +1,19 @@
+OFF-TARGET AMPLIFICATION
+
+Significant off-target amplification detected: 14% of reads are not CARLIN.
+
+REFERENCE_LIST
+
+Collapsing MiSeq cell barcodes against the platform's reference list may lead to more FPs and FNs.
+
+FILTERING
+
+Sequencing depth insufficent. Low number of reads detected in FASTQ.
+
+ANALYSIS
+
+Only 1% of common CBs could successfully call an allele. Only 17% of reads in callable CBs folded into consensus for allele. This suggests an issue with library preparation, such as low primer specificity or cross-talk during amplification.
+
+RESULTS
+
+Template allele never reported by any CB. This is likely because difficulty in establishing allele-calling consensus for many CBs penalizes longer sequences

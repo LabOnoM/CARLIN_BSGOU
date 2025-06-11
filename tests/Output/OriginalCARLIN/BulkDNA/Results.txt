@@ -1,0 +1,66 @@
+INPUT
+
+CARLIN Amplicon:                                        OriginalCARLIN
+CfgType:                                                BulkDNA
+Input FastQ File(s):                                    /home/ubuntu4/CARLIN/tests/data/OriginalCARLIN/BulkDNA.fastq.gz
+Output directory:                                       /home/ubuntu4/CARLIN/tests/Output/OriginalCARLIN/BulkDNA
+
+READ BREAKDOWN                                               Reads      %
+
+in_fastq:                                                   100000    100
+UMI_correct_length:                                          94937     95
+UMI_good_QC:                                                 87693     88
+UMI_no_N:                                                   100000    100
+valid_provenance_structure:                                  82630     83
+CARLIN_match:                                                98823     99
+valid_5_primer:                                              94937     95
+valid_3_primer:                                             100000    100
+valid_2_seq:                                                 97504     98
+valid_read_structure:                                        93632     94
+trimmed_SEQ_long_enough:                                     93629     94
+SEQ_no_N:                                                    93632     94
+valid_SEQ_structure:                                         93629     94
+valid_lines:                                                 81423     81
+common_UMIs:                                                 67482     67
+called_UMIs_total:                                           65551     66
+called_UMIs_allele:                                          56659     57
+eventful_UMIs_total:                                          9858     10
+eventful_UMIs_allele:                                         8013      8
+
+THRESHOLDS
+
+UMI_one_tenth_99_pctl:                                           6
+UMI_max_molecules:                                               2
+UMI_equal_partition:                                             0
+UMI_err_floor:                                                   1
+UMI_read_floor:                                                 10
+UMI_override:                                                  NaN
+UMI_chosen:                                                     10
+
+UMI BREAKDOWN
+
+uncleaned:                                                   11887
+cleaned:                                                     10245
+common:                                                       1870
+called:                                                       1830
+eventful:                                                      152
+
+PREFERENTIAL AMPLIFICATION
+
+Mean reads per edited UMI:                                      65
+Mean reads per unedited UMI:                                    33
+
+SEQUENCE HETEROGENEITY
+
+Mean % reads in edited UMI folded into consensus:               81
+Mean % reads in unedited UMI folded into consensus:             87
+
+ALLELES
+
+Total (including template):                                    125
+Singletons (including template):                               102
+% UMIs edited:                                                   8
+Effective Alleles:                                             115
+Diversity Index (normalized by all):                          0.06
+Diversity Index (normalized by edited):                       0.76
+Mean CARLIN potential (by allele):                            5.70

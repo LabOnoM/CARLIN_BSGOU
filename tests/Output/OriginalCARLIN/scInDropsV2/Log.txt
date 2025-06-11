@@ -1,0 +1,40 @@
+Writing log to temporary location: /tmp/tp526822d9_edcc_4d69_a795_e79811dcca5b.txt
+Parsing CFG file: scInDropsV2.json
+Parsing CARLIN amplicon file: OriginalCARLIN.json
+Parsing CB reference list: /home/ubuntu4/CARLIN/cfg/CBs/InDropsV2_barcodes.txt.gz
+Unzipping CB reference file to: /tmp/tp1d0ca603_6c7a_40f2_bced_55687872cb35/InDropsV2_barcodes.txt
+Removing unzipped CB reference file: /tmp/tp1d0ca603_6c7a_40f2_bced_55687872cb35/InDropsV2_barcodes.txt
+147456 CBs in reference list
+Parsing FASTQ file: /home/ubuntu4/CARLIN/tests/data/OriginalCARLIN/InDropsV2.fastq.gz
+Unzipping FASTQ file to: /tmp/tp95eede1b_20fe_4515_8d2c_407ac4a0a775/InDropsV2.fastq
+Reads in FASTQ: 100000
+Removing unzipped FASTQ file: /tmp/tp95eede1b_20fe_4515_8d2c_407ac4a0a775/InDropsV2.fastq
+Analyzing SC CBs and UMIs
+From 100000 reads, found good (L_QC,L_CB,L_UMI,QC,no N CB,no N UMI,all) (100000,100000,99968,11718,99996,100000,11704) times
+Trimming CARLIN sequences from reads
+From 100000 reads, found (CARLIN,5,3,control,structure,long,AGCT,all) sequences (88386,100000,100000,68331,68331,68331,68322,68322) times
+Merging filters
+From 100000 reads, found valid (provenance,sequence,both) reads (11704,68322,6280) times
+Creating aligned CARLIN store with 742 sequences
+Sanitizing prefix/postfix of aligned sequences in depot
+...reduced sequence diversity from 742 to 577
+Sanitizing conserved regions of aligned sequences in depot
+...reduced sequence diversity from 577 to 220
+Building CB collection from FastQ with 1702 CBs
+Denoising CB collection
+...(1545/1702) MiSEQ CBs matched to (1508/147456) reference CBs
+Denoising UMIs
+Computing thresholds for CB collection
+...(6,2,1,1,10,NaN,10) reads for (99th pctl/10,max_cells,equal,seq_err,min,override,final)
+...35 common CBs
+...(6,2,0,1,10,NaN,10) reads for (99th pctl/10,max_molecules,equal,seq_err,min,override,final)
+...35 common UMIs
+Calling alleles for CB collection
+...35 CBs callable
+Generating report for SC experiment
+Saving results...24/35 tags edited, 10 alleles
+Generating results file
+Generating allele plot
+Generating diagnostic plot
+Generating warnings file
+Pipeline COMPLETED in 24.3626 seconds

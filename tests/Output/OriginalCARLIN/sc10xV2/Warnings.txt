@@ -1,0 +1,26 @@
+OFF-TARGET AMPLIFICATION
+
+Significant off-target amplification detected: 10% of reads are not CARLIN.
+
+REFERENCE_LIST
+
+Collapsing MiSeq cell barcodes against the platform's reference list may lead to more FPs and FNs.
+
+FILTERING
+
+Sequencing depth insufficent. Low number of reads detected in FASTQ.
+
+ANALYSIS
+
+Preferential amplification of edited alleles detected. (Reads per edited CB / reads per unedited CB) > 2.
+
+Number of common CBs is low (376). This is likely due to:
+ - reads dedicated to FP CBs owing to the inflated reference list used
+ - low sequencing depth so that many CBs do not exceed the required threshold
+ - preferential amplification of edited transcripts causing many reads to be allocated to a few CBs
+
+Only 60% of reads in callable CBs folded into consensus for allele. This suggests an issue with library preparation, such as low primer specificity or cross-talk during amplification.
+
+RESULTS
+
+Low +Dox induction detected. Only 13% of CBs reported an edited CARLIN allele.
