@@ -48,6 +48,14 @@ sudo mkswap /swapfile
 sudo swapon /swapfile
 ```
 
+## Optimize analyze_CARLIN for memory usage
+
+For large FASTQ inputs, the analysis code now writes the raw and aligned sequence data to temporary MAT files instead of keeping everything in memory. These spill files are loaded back on demand and greatly reduce the peak RAM requirements at the cost of extra disk usage.
+
+**Summary**
+ - The `FastQData` class now includes a `spill_to_disk` method that writes large fields to a `MAT-file` and clears them from memory, with `load_from_disk` reloading the data when needed
+ - `analyze_CARLIN` spills `FASTQ` and `alignment` data to disk during processing to keep memory usage low
+
 # CARLIN Pipeline
 
 The CARLIN pipeline calls alleles from sequencing runs of the CARLIN amplicon. It was written in MATLAB 2019a.
