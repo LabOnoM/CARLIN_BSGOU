@@ -57,6 +57,9 @@ classdef (Sealed=true) SCFastQData < FastQData
             UMIs = cell(N,1);
             [is, which_CB] = ismember(CB, obj.CB);
             
+            if isempty(obj.UMI) && ~isempty(obj.backing_file)
+                obj.load_from_disk();
+            end
             if (any(is))
                 temp = obj.read_CB(obj.masks.valid_lines);
                 filter(is) = arrayfun(@(i) obj.masks.valid_lines(temp==i), which_CB(is), 'un', false);
@@ -68,6 +71,9 @@ classdef (Sealed=true) SCFastQData < FastQData
         end
         
         function CBs = get_CBs(obj)
+            if isempty(obj.CB) && ~isempty(obj.backing_file)
+                obj.load_from_disk();
+            end
             CBs = obj.CB(unique_by_freq(obj.read_CB(obj.masks.valid_lines)));
         end
         
