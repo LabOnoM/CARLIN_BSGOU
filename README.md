@@ -1,3 +1,5 @@
+# This if a forked branch to the original [CARLIN](https://gitlab.com/hormozlab/carlin)
+
 # CARLIN Pipeline
 
 The CARLIN pipeline calls alleles from sequencing runs of the CARLIN amplicon. It was written in MATLAB 2019a.
