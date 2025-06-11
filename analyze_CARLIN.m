@@ -223,12 +223,18 @@ function analyze_CARLIN(fastq_file, cfg_type, outdir, varargin)
     plot_summary(summary, params.Results.outdir);
     
     fprintf('Generating diagnostic plot\n');
-    if (strcmp(cfg.type, 'Bulk'))    
+    if (strcmp(cfg.type, 'Bulk'))
         suspect_alleles = plot_diagnostic(cfg, FQ, aligned, tag_collection_denoised, tag_denoise_map, tag_called_allele, ...
                                           summary, thresholds, params.Results.outdir);
     else
         suspect_alleles = plot_diagnostic(cfg, FQ, aligned, tag_collection_denoised, tag_denoise_map, tag_called_allele, ...
                                           summary, thresholds, ref_CBs, params.Results.outdir);
+    end
+    % Free FASTQ data from memory after plots
+    try
+        FQ.spill_to_disk(sprintf('%s/FQ_backup.mat', params.Results.outdir));
+    catch
+        warning('Could not spill FASTQ data to disk.');
     end
     warning('on', 'MATLAB:hg:AutoSoftwareOpenGL');
                                   

@@ -1,6 +1,6 @@
 classdef (Abstract=true) FastQData < handle
-    
-    properties (SetAccess = immutable, GetAccess = public)
+
+    properties (GetAccess = public)
         source_files
         Nreads
         SEQ_raw
@@ -14,6 +14,7 @@ classdef (Abstract=true) FastQData < handle
         read_UMI
         masks
         trim_loc
+        backing_file = ''
     end
     
         
@@ -96,6 +97,44 @@ classdef (Abstract=true) FastQData < handle
         function SEQs = get_SEQs(obj)
             assert(~any(cellfun(@isempty, obj.SEQ_valid)));
             SEQs = cellfun(@int2nt, obj.SEQ_valid, 'un', false);
+        end
+
+        function spill_to_disk(obj, filename)
+            if nargin < 2
+                filename = [tempname '.mat'];
+            end
+            s = struct('source_files', obj.source_files, 'Nreads', obj.Nreads, ...
+                        'SEQ_raw', {obj.SEQ_raw}, 'read_SEQ_raw', obj.read_SEQ_raw, ...
+                        'SEQ_trimmed', {obj.SEQ_trimmed}, 'read_SEQ_trimmed', obj.read_SEQ_trimmed, ...
+                        'SEQ_valid', {obj.SEQ_valid}, 'read_SEQ_valid', obj.read_SEQ_valid, ...
+                        'QC', {obj.QC}, 'UMI', {obj.UMI}, 'read_UMI', obj.read_UMI, ...
+                        'masks', obj.masks, 'trim_loc', obj.trim_loc);
+            save(filename, '-struct', 's', '-v7.3');
+            obj.source_files = [];
+            obj.Nreads = [];
+            obj.SEQ_raw = [];
+            obj.read_SEQ_raw = [];
+            obj.SEQ_trimmed = [];
+            obj.read_SEQ_trimmed = [];
+            obj.SEQ_valid = [];
+            obj.read_SEQ_valid = [];
+            obj.QC = [];
+            obj.UMI = [];
+            obj.read_UMI = [];
+            obj.masks = [];
+            obj.trim_loc = [];
+            obj.backing_file = filename;
+        end
+
+        function load_from_disk(obj)
+            if isempty(obj.backing_file) || exist(obj.backing_file,'file') ~= 2
+                return;
+            end
+            s = load(obj.backing_file);
+            fns = fieldnames(s);
+            for i = 1:numel(fns)
+                obj.(fns{i}) = s.(fns{i});
+            end
         end
     end
 
