@@ -155,10 +155,10 @@ function suspect_alleles = plot_diagnostic(cfg, FQ, aligned, tag_collection_deno
         sp(1,4) = UMI_composition_all(Nr, Nc, 4, FQ, summary);                           
         sp(1,5) = UMI_composition_by_allele(Nr, Nc, 5, summary);
         sp(2,1) = reads_by_tag       (Nr, Nc, [ 6: 9], dat, cutoff, summary, 'UMI');
-        sp(3,1) = distance_by_tag    (Nr, Nc, [11:14], dat, cutoff, FQ, aligned, summary);
+        sp(3,1) = distance_by_tag    (Nr, Nc, [11:14], dat, cutoff, FQ, aligned_seqs, summary);
         sp(4,1) = variety_by_tag     (Nr, Nc, [16:19], dat, cutoff, 'UMI');        
         sp(2,2) = reads_by_allele    (Nr, Nc, 10, dat, summary);
-        [sp(3,2), suspect_alleles] = distance_by_allele (Nr, Nc, 15, dat, FQ, aligned, summary, 'UMI');
+        [sp(3,2), suspect_alleles] = distance_by_allele (Nr, Nc, 15, dat, FQ, aligned_seqs, summary, 'UMI');
         sp(4,2) = variety_by_allele  (Nr, Nc, 20, dat, 'UMI');                     
     else
         sp(1,1) = reads_by_filter(Nr, Nc, 1, summary, 'CB');
@@ -167,10 +167,10 @@ function suspect_alleles = plot_diagnostic(cfg, FQ, aligned, tag_collection_deno
         sp(1,4) = CB_UMI_composition_all(Nr, Nc, 4, FQ, summary, dat);
         sp(1,5) = CB_UMI_composition_by_allele(Nr, Nc, 5, summary, FQ, dat);
         sp(2,1) = reads_by_tag       (Nr, Nc, [ 6: 9], dat, cutoff, summary, 'CB');
-        sp(3,1) = distance_by_tag    (Nr, Nc, [11:14], dat, cutoff, FQ, aligned, summary);
+        sp(3,1) = distance_by_tag    (Nr, Nc, [11:14], dat, cutoff, FQ, aligned_seqs, summary);
         sp(4,1) = variety_by_tag     (Nr, Nc, [16:19], dat, cutoff, 'CB');
         sp(2,2) = reads_by_allele    (Nr, Nc, 10, dat, summary);
-        [sp(3,2), suspect_alleles] = distance_by_allele (Nr, Nc, 15, dat, FQ, aligned, summary, 'CB');
+        [sp(3,2), suspect_alleles] = distance_by_allele (Nr, Nc, 15, dat, FQ, aligned_seqs, summary, 'CB');
         sp(4,2) = variety_by_allele  (Nr, Nc, 20, dat, 'CB');        
     end
     
@@ -606,7 +606,7 @@ function sp = reads_by_allele(Nr, Nc, which_sp, dat, summary)
  
 end
                  
-function sp = distance_by_tag(Nr, Nc, which_sp, dat, cutoff, FQ, aligned, summary)
+function sp = distance_by_tag(Nr, Nc, which_sp, dat, cutoff, FQ, aligned_seqs, summary)
                      
     y_sanitized = unique([dat.CB dat.sequence dat.sanitized], 'rows');
     y_sanitized(y_sanitized(:,1)>cutoff,:) = [];
@@ -685,7 +685,7 @@ function sp = distance_by_tag(Nr, Nc, which_sp, dat, cutoff, FQ, aligned, summar
     set(gca, 'Xtick', []); 
 end
 
-function [sp, suspect_alleles] = distance_by_allele(Nr, Nc, which_sp, dat, FQ, aligned, summary, type)
+function [sp, suspect_alleles] = distance_by_allele(Nr, Nc, which_sp, dat, FQ, aligned_seqs, summary, type)
 
     if (strcmp(type, 'UMI'))
         
