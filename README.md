@@ -48,7 +48,7 @@ sudo mkswap /swapfile
 sudo swapon /swapfile
 ```
 
-## Optimize analyze_CARLIN for memory usage
+## Modified `analyze_CARLIN()` for reducing RAM usage
 
 For large FASTQ inputs, the analysis code now writes the raw and aligned sequence data to temporary MAT files instead of keeping everything in memory. These spill files are loaded back on demand and greatly reduce the peak RAM requirements at the cost of extra disk usage.
 
