@@ -39,6 +39,15 @@ disp(['wine ' prog ' ' catchall_input_file_win ' ' catchall_subdir_win]);
 system(['wine ' prog ' ' catchall_input_file_win ' ' catchall_subdir_win]);
 ```
 
+For super huge fastq file, you may need a large swap file:
+```bash
+sudo swapoff -a
+sudo dd if=/dev/zero of=/swapfile bs=1M count=500000
+sudo chmod 0600 /swapfile
+sudo mkswap /swapfile
+sudo swapon /swapfile
+```
+
 # CARLIN Pipeline
 
 The CARLIN pipeline calls alleles from sequencing runs of the CARLIN amplicon. It was written in MATLAB 2019a.
