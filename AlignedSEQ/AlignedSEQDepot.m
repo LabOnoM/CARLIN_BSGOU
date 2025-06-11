@@ -70,9 +70,10 @@ classdef AlignedSEQDepot < handle
             if nargin < 2
                 filename = [tempname '.mat'];
             end
-            s = struct('unaligned_SEQ', {obj.unaligned_SEQ}, 'aligned_SEQ', {obj.aligned_SEQ}, ...
-                       'alignment_map', obj.alignment_map);
-            save(filename, '-struct', 's', '-v7.3');
+            mf = matfile(filename, 'Writable', true);
+            mf.unaligned_SEQ = obj.unaligned_SEQ;
+            mf.aligned_SEQ   = obj.aligned_SEQ;
+            mf.alignment_map = obj.alignment_map;
             obj.unaligned_SEQ = [];
             obj.aligned_SEQ = [];
             obj.alignment_map = [];

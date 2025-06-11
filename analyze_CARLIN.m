@@ -221,7 +221,14 @@ function analyze_CARLIN(fastq_file, cfg_type, outdir, varargin)
     end
     gzip(sprintf('%s/Analysis.mat', params.Results.outdir));
     delete(sprintf('%s/Analysis.mat', params.Results.outdir));
-    
+
+    % Spill FASTQ data before plotting to reduce memory usage
+    try
+        FQ.spill_to_disk(sprintf('%s/FQ_postsummary.mat', params.Results.outdir));
+    catch
+        warning('Could not spill FASTQ data to disk.');
+    end
+
     % Generate outputs
     
     if (strcmp(cfg.type, 'Bulk'))

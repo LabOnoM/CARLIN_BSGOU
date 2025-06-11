@@ -112,13 +112,20 @@ classdef (Abstract=true) FastQData < handle
             if nargin < 2
                 filename = [tempname '.mat'];
             end
-            s = struct('source_files', obj.source_files, 'Nreads', obj.Nreads, ...
-                        'SEQ_raw', {obj.SEQ_raw}, 'read_SEQ_raw', obj.read_SEQ_raw, ...
-                        'SEQ_trimmed', {obj.SEQ_trimmed}, 'read_SEQ_trimmed', obj.read_SEQ_trimmed, ...
-                        'SEQ_valid', {obj.SEQ_valid}, 'read_SEQ_valid', obj.read_SEQ_valid, ...
-                        'QC', {obj.QC}, 'UMI', {obj.UMI}, 'read_UMI', obj.read_UMI, ...
-                        'masks', obj.masks, 'trim_loc', obj.trim_loc);
-            save(filename, '-struct', 's', '-v7.3');
+            mf = matfile(filename, 'Writable', true);
+            mf.source_files   = obj.source_files;
+            mf.Nreads         = obj.Nreads;
+            mf.SEQ_raw        = obj.SEQ_raw;
+            mf.read_SEQ_raw   = obj.read_SEQ_raw;
+            mf.SEQ_trimmed    = obj.SEQ_trimmed;
+            mf.read_SEQ_trimmed = obj.read_SEQ_trimmed;
+            mf.SEQ_valid      = obj.SEQ_valid;
+            mf.read_SEQ_valid = obj.read_SEQ_valid;
+            mf.QC             = obj.QC;
+            mf.UMI            = obj.UMI;
+            mf.read_UMI       = obj.read_UMI;
+            mf.masks          = obj.masks;
+            mf.trim_loc       = obj.trim_loc;
             obj.source_files = [];
             obj.Nreads = [];
             obj.SEQ_raw = [];

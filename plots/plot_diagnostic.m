@@ -2,6 +2,7 @@ function suspect_alleles = plot_diagnostic(cfg, FQ, aligned, tag_collection_deno
                                            tag_called_allele, summary, thresholds, varargin)
 
     aligned.load_from_disk();
+    FQ.load_from_disk();
     aligned_seqs = aligned.get_aligned_SEQs();
     
     [~, ~, event_ind] = unique(cellfun(@(x) x.get_event_structure, aligned_seqs, 'un', false));
@@ -545,9 +546,9 @@ function sp = reads_by_tag(Nr, Nc, which_sp, dat, cutoff, summary, type)
             'EdgeColor', 'none', 'FaceColor', 'cyan', 'FaceAlpha', 0.4, 'BarWidth', 0.99);    
         legend_entries = [legend_entries; cellstr('Edited Allele')];
     end
-    scatter(x_reads_sanitized( discard_mask), log10(y_reads_sanitized( discard_mask)), [], 'b', 'Marker', '.');
-    scatter(x_reads_sanitized(~discard_mask), log10(y_reads_sanitized(~discard_mask)), 10, 'g', 'filled', 'Marker', 'o');
-    scatter(x_reads_per_CB, log10(y_reads_per_CB), [], 'r', 'Marker', '.');
+    scatter(x_reads_sanitized( discard_mask), log10(y_reads_sanitized( discard_mask)), [], [0 0 1], 'Marker', '.');
+    scatter(x_reads_sanitized(~discard_mask), log10(y_reads_sanitized(~discard_mask)), 10, [0 1 0], 'filled', 'Marker', 'o');
+    scatter(x_reads_per_CB, log10(y_reads_per_CB), [], [1 0 0], 'Marker', '.');
     hold off;
     
     legend([legend_entries; {'Sanitized - Discarded'; 'Sanitized - Merged in Allele'; sprintf('Per %s', type)}]);
@@ -596,9 +597,9 @@ function sp = reads_by_allele(Nr, Nc, which_sp, dat, summary)
         bar(find(~template_mask), log10(y_reads_called(~template_mask)), ...
             'EdgeColor', 'none', 'FaceColor', 'cyan', 'FaceAlpha', 0.4, 'BarWidth', 0.99);    
     end
-    scatter(x_reads_sanitized( discard_mask), log10(y_reads_sanitized( discard_mask)), [], 'b', 'Marker', '.');
-    scatter(x_reads_sanitized(~discard_mask), log10(y_reads_sanitized(~discard_mask)), 10, 'g', 'filled', 'Marker', 'o');
-    scatter(x_reads_per_CB, log10(y_reads_per_CB), [], 'r', 'Marker', '.');
+    scatter(x_reads_sanitized( discard_mask), log10(y_reads_sanitized( discard_mask)), [], [0 0 1], 'Marker', '.');
+    scatter(x_reads_sanitized(~discard_mask), log10(y_reads_sanitized(~discard_mask)), 10, [0 1 0], 'filled', 'Marker', 'o');
+    scatter(x_reads_per_CB, log10(y_reads_per_CB), [], [1 0 0], 'Marker', '.');
     hold off;
         
     axis tight; box on;
@@ -665,11 +666,11 @@ function sp = distance_by_tag(Nr, Nc, which_sp, dat, cutoff, FQ, aligned_seqs, s
         
     sp = subplot(Nr,Nc,which_sp);
     
-    s = scatter(x_sanitized( discard_mask,1), L_sanitized( discard_mask), [], 'b', 'Marker', '.'); hold on;
+    s = scatter(x_sanitized( discard_mask,1), L_sanitized( discard_mask), [], [0 0 1], 'Marker', '.'); hold on;
     s.MarkerFaceAlpha = 0.3;
     s.MarkerEdgeAlpha = 0.3;
-    scatter(x_sanitized(~discard_mask,1), L_sanitized(~discard_mask), [], 'g', 'Marker', '.'); 
-    scatter(x_allele(:,1),                L_allele,                   [], 'r', 'Marker', '.'); 
+    scatter(x_sanitized(~discard_mask,1), L_sanitized(~discard_mask), [], [0 1 0], 'Marker', '.');
+    scatter(x_allele(:,1),                L_allele,                   [], [1 0 0], 'Marker', '.');
 %     errorbar(x_sanitized(discard_mask,1), L_sanitized(discard_mask), ...
 %              L_sanitized_neg(discard_mask), L_sanitized_pos(discard_mask), ...
 %              'LineStyle', 'None', 'color', 'b');
@@ -811,11 +812,11 @@ function [sp, suspect_alleles] = distance_by_allele(Nr, Nc, which_sp, dat, FQ, a
     
     set(gca,'YDir','normal', 'Yticklabels', []); yyaxis right;
 
-    s = scatter(x_sanitized( discard_mask), L_sanitized( discard_mask), [], 'b', 'Marker', '.'); hold on;
+    s = scatter(x_sanitized( discard_mask), L_sanitized( discard_mask), [], [0 0 1], 'Marker', '.'); hold on;
     s.MarkerFaceAlpha = 0.3;
     s.MarkerEdgeAlpha = 0.3;
-    scatter(x_sanitized(~discard_mask), L_sanitized(~discard_mask), [], 'g', 'Marker', '.'); 
-    scatter(x_allele, L_allele, [], 'r', 'Marker', '.'); 
+    scatter(x_sanitized(~discard_mask), L_sanitized(~discard_mask), [], [0 1 0], 'Marker', '.');
+    scatter(x_allele, L_allele, [], [1 0 0], 'Marker', '.');
 
 %     errorbar(x_sanitized(discard_mask), L_sanitized(discard_mask), ...
 %              L_sanitized_neg(discard_mask), L_sanitized_pos(discard_mask), 'LineStyle', 'None', 'Color', 'blue');
