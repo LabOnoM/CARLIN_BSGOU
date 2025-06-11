@@ -4,7 +4,7 @@
 
 The main purpose of this fork is to modify the original CARLIN code for use of `CatchAllCmdW.exe` in Linux environment.
 
-To use `CatchAllCmdW.exe` in Linux, we used a Windows emulator, [Wine](https://www.winehq.org).
+To use `CatchAllCmdW.exe` in Linux, we used a Windows emulator, [Wine](https://www.winehq.org):
 
 ```bash
 sudo apt install --install-recommends winehq-stable
