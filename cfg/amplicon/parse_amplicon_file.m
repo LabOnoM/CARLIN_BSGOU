@@ -3,7 +3,7 @@ function con = parse_amplicon_file(amplicon_file)
     if(~endsWith(amplicon_file, '.json'))
         fprintf('Parsing CARLIN amplicon file: %s.json\n', amplicon_file);
         [folder, ~, ~] = fileparts(mfilename('fullpath'));
-        if (ismember(amplicon_file, {'OriginalCARLIN'; 'TigreCARLIN'}))
+        if (ismember(amplicon_file, {'OriginalCARLIN'; 'TigreCARLIN'; 'StereoSeqCARLIN'}))
             amplicon_file = sprintf('%s/%s.json', folder, amplicon_file);
         else
             error('Unrecognized preset amplicon file: %s. Valid options are {OriginalCARLIN, TigreCARLIN}', amplicon_file)
