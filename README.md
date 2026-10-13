@@ -56,6 +56,10 @@ For large FASTQ inputs, the analysis code now writes the raw and aligned sequenc
  - The `FastQData` class now includes a `spill_to_disk` method that writes large fields to a `MAT-file` and clears them from memory, with `load_from_disk` reloading the data when needed
  - `analyze_CARLIN` spills `FASTQ` and `alignment` data to disk during processing to keep memory usage low
 
+## Checks and deploys
+
+This repository uses no GitHub Actions (LabOnoM decision, 2026-10-13): run its MATLAB tests (`runtests` in `tests/`, see Troubleshooting) by hand before merging and record the result in the pull request; nothing runs automatically.
+
 # CARLIN Pipeline
 
 The CARLIN pipeline calls alleles from sequencing runs of the CARLIN amplicon. It was written in MATLAB 2019a.
